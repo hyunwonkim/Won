@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Squid Games @ Stanford</title>
+
+<!-- Stanford brand typefaces (degrade gracefully to system serif/sans if offline) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500&family=Source+Sans+3:wght@400;500;600;700&family=Source+Code+Pro:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ───────────────────────── Stanford palette & tokens ───────────────────────── */
+:root{
+  --cardinal:#8C1515;        /* Stanford Cardinal */
+  --cardinal-dark:#690000;
+  --cardinal-deep:#560000;
+  --black:#2E2D29;           /* Stanford warm black */
+  --stone:#5b524a;           /* soft body text */
+  --stone-2:#8a7f73;
+  --sandstone:#E0D6C2;       /* sandstone wall */
+  --sandstone-2:#D6C9AE;
+  --fog:#F6F1E7;             /* page background */
+  --cloud:#FBF8F1;           /* card surface */
+  --line:rgba(46,45,41,.12);
+  --line-soft:rgba(46,45,41,.07);
+
+  --poppy:#E98300;           /* Stanford Poppy */
+  --palo:#175E54;            /* Stanford Palo Alto green */
+  --sky:#0098DB;             /* Stanford Sky */
+  --gold:#B3995D;            /* Stanford Sandhill gold */
+
+  --shadow-soft:0 1px 2px rgba(46,45,41,.05), 0 14px 30px -18px rgba(46,45,41,.35);
+  --shadow-lift:0 3px 6px rgba(46,45,41,.06), 0 30px 56px -22px rgba(140,21,21,.40);
+
+  --serif:'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --sans:'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono:'Source Code Pro', ui-monospace, Menlo, monospace;
+}
+
+*{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
+body{
+  margin:0; color:var(--black); font-family:var(--sans); font-size:16px; line-height:1.5;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  background-color:var(--fog);
+  background-image:
+    radial-gradient(120% 80% at 8% -8%, rgba(233,131,0,.12), transparent 55%),
+    radial-gradient(110% 70% at 100% 0%, rgba(140,21,21,.10), transparent 52%),
+    radial-gradient(120% 90% at 50% 118%, rgba(23,94,84,.08), transparent 55%),
+    linear-gradient(180deg, var(--fog), #efe7d7);
+  background-attachment:fixed;
+}
+/* sandstone grain (inline, works offline) */
+body::before{
+  content:""; position:fixed; inset:0; z-index:60; pointer-events:none; opacity:.045; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+a{ color:inherit; text-decoration:none; }
+::selection{ background:var(--cardinal); color:#fff; }
+.mono{ font-family:var(--mono); }
+.serif{ font-family:var(--serif); }
+
+/* ───────────────────────── layout ───────────────────────── */
+.wrap{ max-width:1180px; margin:0 auto; padding:0 20px; }
+.grid{ display:grid; grid-template-columns:minmax(0,1fr); gap:26px; padding:26px 0 120px; }
+.col{ display:flex; flex-direction:column; gap:26px; min-width:0; }
+.rail{ display:flex; flex-direction:column; gap:22px; }
+@media(min-width:1024px){
+  .grid{ grid-template-columns:minmax(0,1fr) 340px; gap:32px; padding-bottom:64px; }
+  .rail{ position:sticky; top:90px; align-self:start; }
+}
+
+/* ───────────────────────── header ───────────────────────── */
+.header{ position:sticky; top:0; z-index:40; border-bottom:1px solid var(--line);
+  background:rgba(246,241,231,.82); backdrop-filter:saturate(140%) blur(10px); }
+.header-in{ max-width:1180px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.brand{ display:flex; align-items:center; gap:11px; }
+.mark{ position:relative; width:38px; height:34px; flex:none; }
+.mark svg{ position:absolute; transition:transform .35s cubic-bezier(.2,.8,.2,1); }
+.mark .c1{ left:0; top:4px; } .mark .c2{ left:10px; top:0; } .mark .c3{ left:20px; top:5px; }
+.brand:hover .c1{ transform:translateX(-3px); } .brand:hover .c3{ transform:translateX(3px); }
+.brand-name{ font-family:var(--serif); font-weight:600; font-size:18px; letter-spacing:-.01em; line-height:1; color:var(--black); }
+.brand-sub{ font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-2); margin-top:3px; }
+.nav{ display:none; gap:2px; }
+.nav a{ padding:7px 14px; border-radius:999px; font-size:14px; color:var(--stone); transition:all .2s; }
+.nav a:hover{ background:rgba(46,45,41,.05); color:var(--black); }
+.nav a.active{ background:var(--black); color:var(--fog); font-weight:600; }
+.header-right{ display:flex; align-items:center; gap:10px; }
+.streak-chip{ display:none; align-items:center; gap:6px; padding:6px 12px; border-radius:999px;
+  background:rgba(140,21,21,.09); color:var(--cardinal); box-shadow:inset 0 0 0 1px rgba(140,21,21,.16); }
+.streak-chip .n{ font-family:var(--mono); font-weight:600; font-size:12px; }
+@media(min-width:1024px){ .nav{ display:flex; } .streak-chip{ display:inline-flex; } }
+@media(min-width:560px){ .streak-chip{ display:inline-flex; } }
+
+/* avatars */
+.av{ display:grid; place-items:center; border-radius:50%; color:#fff; font-family:var(--mono);
+  font-weight:600; font-size:12px; flex:none; box-shadow:0 0 0 2.5px var(--cloud); }
+
+/* ───────────────────────── cards & primitives ───────────────────────── */
+.card{ background:var(--cloud); border-radius:22px; box-shadow:var(--shadow-soft); border:1px solid var(--line-soft); }
+.kicker{ font-family:var(--mono); font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--cardinal); }
+.sec-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.sec-title{ font-family:var(--serif); font-weight:600; font-size:25px; letter-spacing:-.015em; margin:4px 0 0; color:var(--black); }
+.sec-sub{ font-size:13.5px; color:var(--stone); margin:5px 0 0; }
+.sec-link{ font-size:13px; font-weight:600; color:var(--stone-2); white-space:nowrap; }
+.sec-link:hover{ color:var(--cardinal); text-decoration:underline; text-underline-offset:3px; }
+
+.btn{ border:0; cursor:pointer; font-family:var(--sans); font-weight:600; border-radius:999px; transition:all .2s; }
+.btn-primary{ background:var(--cardinal); color:#fff; padding:13px 24px; font-size:15px;
+  box-shadow:var(--shadow-lift); display:inline-flex; align-items:center; gap:8px; }
+.btn-primary:hover{ background:var(--cardinal-dark); transform:translateY(-2px); }
+.btn-primary:active{ transform:none; }
+.btn-ghost{ background:rgba(46,45,41,.05); color:var(--black); padding:13px 18px; font-size:14px; box-shadow:inset 0 0 0 1px var(--line); }
+.btn-ghost:hover{ background:rgba(46,45,41,.1); }
+
+/* arcade (Mission-Revival arches) decorative band */
+.arcade{ display:block; width:100%; height:30px; color:var(--cardinal); opacity:.32; }
+
+/* ───────────────────────── HERO ───────────────────────── */
+.hero{ position:relative; overflow:hidden; padding:0 0 28px; }
+.hero-pad{ padding:24px 26px 0; }
+.hero-deco{ position:absolute; pointer-events:none; }
+.hero-deco.t1{ right:-26px; top:46px; opacity:.08; }
+.hero-deco.t2{ right:120px; top:140px; opacity:.07; }
+.floaty{ animation:floaty 12s ease-in-out infinite; }
+@keyframes floaty{ 0%,100%{ transform:translateY(0) rotate(0); } 50%{ transform:translateY(-18px) rotate(7deg); } }
+
+.greenlight{ display:inline-flex; align-items:center; gap:8px; padding:5px 12px 5px 8px; border-radius:999px;
+  background:rgba(23,94,84,.10); color:var(--palo); box-shadow:inset 0 0 0 1px rgba(23,94,84,.22); }
+.greenlight .dot{ width:8px; height:8px; border-radius:50%; background:var(--palo); animation:pulsedot 2.1s infinite; }
+.greenlight .t{ font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+@keyframes pulsedot{ 0%{ box-shadow:0 0 0 0 rgba(23,94,84,.5);} 70%{ box-shadow:0 0 0 9px rgba(23,94,84,0);} 100%{ box-shadow:0 0 0 0 rgba(23,94,84,0);} }
+
+.hero h1{ font-family:var(--serif); font-weight:600; font-size:40px; line-height:1.04; letter-spacing:-.02em; margin:16px 0 0; color:var(--black); }
+.hero h1 em{ font-style:italic; color:var(--cardinal); }
+.hero p.lead{ max-width:30rem; margin:12px 0 0; font-size:15px; color:var(--stone); }
+.hero b{ color:var(--black); }
+
+.panel{ margin:22px 26px 0; background:rgba(224,214,194,.34); border:1px solid var(--line-soft); border-radius:18px; padding:18px 20px; }
+.panel-row{ display:flex; flex-direction:column; gap:18px; }
+@media(min-width:560px){ .panel-row{ flex-direction:row; align-items:flex-end; justify-content:space-between; } }
+.cd-label{ font-family:var(--mono); font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-2); }
+.countdown{ display:flex; align-items:flex-end; gap:8px; margin-top:8px; }
+.cd-unit{ text-align:center; }
+.cd-num{ font-family:var(--mono); font-weight:600; font-size:42px; line-height:1; color:var(--black); font-variant-numeric:tabular-nums; }
+.cd-cap{ font-family:var(--mono); font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--stone-2); margin-top:6px; }
+.cd-colon{ font-size:28px; color:rgba(140,21,21,.4); padding-bottom:22px; animation:blink 1s steps(1) infinite; }
+@keyframes blink{ 50%{ opacity:.25; } }
+.when{ font-size:14px; }
+.when div{ display:flex; align-items:center; gap:7px; margin-top:4px; }
+@media(min-width:560px){ .when{ text-align:right; } .when div{ justify-content:flex-end; } }
+.when .muted{ color:var(--stone); }
+
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+.chip{ display:inline-flex; align-items:center; gap:7px; padding:6px 11px; border-radius:999px; font-size:12.5px; font-weight:600; }
+
+.hero-foot{ display:flex; flex-direction:column; gap:16px; margin:22px 26px 0; }
+@media(min-width:560px){ .hero-foot{ flex-direction:row; align-items:center; justify-content:space-between; } }
+.stack{ display:flex; align-items:center; gap:12px; }
+.av-row{ display:flex; }
+.av-row .av{ margin-left:-9px; } .av-row .av:first-child{ margin-left:0; }
+.going .n{ font-weight:600; color:var(--black); font-size:14px; }
+.going small{ display:block; color:var(--stone); font-size:13px; }
+.cta{ display:flex; align-items:center; gap:10px; }
+
+/* ───────────────────────── people scroller ───────────────────────── */
+.scroller{ display:flex; gap:14px; overflow-x:auto; padding:4px 20px 8px; margin:0 -20px;
+  scroll-snap-type:x mandatory; -ms-overflow-style:none; scrollbar-width:none; }
+.scroller::-webkit-scrollbar{ display:none; }
+@media(min-width:1024px){ .scroller{ margin:0; padding:4px 0 8px; } }
+.person{ width:212px; flex:none; scroll-snap-align:start; background:var(--cloud); border:1px solid var(--line-soft);
+  border-radius:20px; padding:16px; box-shadow:var(--shadow-soft); transition:transform .25s, box-shadow .25s; }
+.person:hover{ transform:translateY(-4px); box-shadow:var(--shadow-lift); }
+.person .top{ display:flex; align-items:center; justify-content:space-between; }
+.person .ago{ font-family:var(--mono); font-size:10px; color:var(--stone-2); }
+.person .nm{ font-family:var(--serif); font-weight:600; font-size:17px; margin-top:12px; color:var(--black); }
+.person .note{ font-size:13px; color:var(--stone); margin-top:3px; line-height:1.35; }
+.person .act{ width:100%; margin-top:14px; border:0; cursor:pointer; padding:9px; border-radius:999px;
+  font-family:var(--sans); font-weight:600; font-size:13px; transition:filter .2s; }
+.person .act:hover{ filter:brightness(.96); }
+.person-add{ width:150px; flex:none; scroll-snap-align:start; border:2px dashed var(--line); border-radius:20px;
+  display:grid; place-content:center; text-align:center; color:var(--stone-2); font-size:13px; transition:all .2s; }
+.person-add:hover{ border-color:rgba(140,21,21,.4); color:var(--cardinal); }
+.person-add .plus{ font-size:24px; }
+
+/* ───────────────────────── highlights (arched, Mission windows) ───────────────────────── */
+.hl-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+@media(min-width:560px){ .hl-grid{ grid-template-columns:1fr 1fr; } }
+.hl{ position:relative; overflow:hidden; border-radius:20px; background:var(--cloud); border:1px solid var(--line-soft);
+  box-shadow:var(--shadow-soft); transition:transform .25s, box-shadow .25s; }
+.hl:hover{ transform:translateY(-4px); box-shadow:var(--shadow-lift); }
+.hl.big{ grid-column:1 / -1; }
+@media(min-width:560px){ .hl.big{ grid-column:1 / 2; } }   /* keep grid balanced */
+.hl-media{ position:relative; height:186px; border-radius:96px 96px 6px 6px; margin:8px 8px 0; }
+.hl-media .grain{ position:absolute; inset:0; border-radius:inherit; opacity:.18;
+  background-image:radial-gradient(circle at 1px 1px,#fff 1px, transparent 0); background-size:13px 13px; }
+.hl-sticker{ position:absolute; right:14px; top:18px; transition:transform .3s; }
+.hl:hover .hl-sticker{ transform:rotate(12deg); }
+.hl-react{ position:absolute; left:14px; bottom:14px; display:flex; gap:6px; }
+.hl-react span{ background:rgba(46,45,41,.32); color:#fff; padding:4px 9px; border-radius:999px;
+  font-family:var(--mono); font-size:11px; font-weight:500; backdrop-filter:blur(2px); }
+.hl-body{ padding:14px 16px 16px; }
+.hl-meta{ font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--stone-2); }
+.hl-title{ font-family:var(--serif); font-weight:600; font-size:18px; line-height:1.25; margin:6px 0 0; color:var(--black); }
+.hl-who{ display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--stone); margin-top:8px; }
+
+/* ───────────────────────── newcomer ───────────────────────── */
+.newcomer{ background:var(--black); color:var(--fog); border-radius:22px; padding:26px; box-shadow:var(--shadow-soft);
+  display:flex; flex-direction:column; gap:18px; position:relative; overflow:hidden; }
+@media(min-width:560px){ .newcomer{ flex-direction:row; align-items:center; justify-content:space-between; } }
+.newcomer .kicker{ color:var(--poppy); }
+.newcomer h3{ font-family:var(--serif); font-weight:600; font-size:22px; margin:8px 0 0; line-height:1.25; }
+.newcomer p{ margin:7px 0 0; font-size:14px; color:rgba(246,241,231,.72); max-width:30rem; }
+.newcomer b{ color:var(--fog); }
+.newcomer .btn{ background:var(--poppy); color:#3a2400; padding:12px 20px; font-size:14px; white-space:nowrap; flex:none; }
+.newcomer .btn:hover{ transform:translateY(-2px); }
+.newcomer .arch-deco{ position:absolute; right:-30px; bottom:-40px; opacity:.10; pointer-events:none; }
+
+/* ───────────────────────── rail cards ───────────────────────── */
+.rcard{ background:var(--cloud); border:1px solid var(--line-soft); border-radius:20px; padding:18px; box-shadow:var(--shadow-soft); }
+.rtitle{ font-family:var(--serif); font-weight:600; font-size:17px; color:var(--black); }
+
+.you-top{ display:flex; align-items:center; justify-content:space-between; }
+.you-id{ display:flex; align-items:center; gap:10px; }
+.you-id .nm{ font-family:var(--serif); font-weight:600; font-size:16px; line-height:1.1; }
+.you-id small{ color:var(--stone); font-size:12px; }
+.streak-box{ margin-top:16px; background:rgba(140,21,21,.06); border-radius:16px; padding:16px; }
+.streak-box .big{ display:flex; align-items:baseline; gap:6px; }
+.streak-box .big b{ font-family:var(--mono); font-weight:600; font-size:30px; color:var(--cardinal); }
+.streak-box .big span{ font-size:14px; color:var(--stone); }
+.weeks{ display:flex; justify-content:space-between; margin-top:14px; }
+.week{ width:28px; height:28px; border-radius:50%; display:grid; place-items:center; font-family:var(--mono); font-size:12px; }
+.week.on{ background:var(--cardinal); color:#fff; } .week.off{ background:rgba(46,45,41,.06); color:var(--stone-2); }
+.streak-note{ font-size:12.5px; color:var(--stone); margin:13px 0 0; line-height:1.4; }
+.streak-note b{ color:var(--cardinal); }
+
+.team{ margin-top:0; }
+.team + .team{ margin-top:13px; }
+.team .row{ display:flex; align-items:center; justify-content:space-between; font-size:13px; }
+.team .row .l{ display:flex; align-items:center; gap:8px; }
+.team .rank{ font-family:var(--mono); color:var(--stone-2); width:12px; }
+.team .nm{ font-weight:600; color:var(--black); }
+.team .pts{ font-family:var(--mono); font-weight:600; }
+.bar{ height:8px; border-radius:999px; background:rgba(46,45,41,.06); margin-top:6px; overflow:hidden; }
+.bar > i{ display:block; height:100%; border-radius:999px; }
+.rnote{ font-size:12px; color:var(--stone); margin:14px 0 0; }
+
+.event{ display:flex; align-items:center; gap:12px; padding:12px 0; }
+.event + .event{ border-top:1px solid var(--line-soft); }
+.event .date{ width:48px; height:48px; flex:none; border-radius:14px; display:grid; place-content:center; text-align:center; line-height:1.05; }
+.event .date .m{ font-family:var(--mono); font-size:10px; } .event .date .d{ font-family:var(--serif); font-weight:600; font-size:15px; }
+.event .info{ min-width:0; flex:1; }
+.event .info .t{ display:flex; align-items:center; gap:6px; }
+.event .info .nm{ font-size:14px; font-weight:600; color:var(--black); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.event .info small{ color:var(--stone); font-size:12px; }
+.tag{ flex:none; padding:2px 7px; border-radius:999px; font-family:var(--mono); font-size:9px; letter-spacing:.04em; text-transform:uppercase; }
+.tag.hot{ background:var(--cardinal); color:#fff; } .tag.soft{ background:rgba(233,131,0,.18); color:#9a5500; }
+.cal-btn{ width:100%; margin-top:12px; }
+
+.rail-foot{ text-align:center; font-family:var(--mono); font-size:10px; line-height:1.7; letter-spacing:.04em; color:var(--stone-2); padding:0 8px; }
+
+/* ───────────────────────── bottom tab (mobile) ───────────────────────── */
+.tabbar{ position:fixed; left:0; right:0; bottom:0; z-index:40; border-top:1px solid var(--line);
+  background:rgba(246,241,231,.92); backdrop-filter:blur(10px); padding-bottom:env(safe-area-inset-bottom); }
+.tabbar-in{ max-width:480px; margin:0 auto; display:flex; justify-content:space-around; padding:0 8px; }
+.tab{ flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; padding:9px 0; color:var(--stone-2); }
+.tab svg{ width:23px; height:23px; }
+.tab span{ font-size:10px; font-weight:600; }
+.tab.active{ color:var(--cardinal); }
+@media(min-width:1024px){ .tabbar{ display:none; } }
+
+/* reveal-on-load */
+.reveal{ animation:fadeUp .7s cubic-bezier(.2,.7,.2,1) both; animation-delay:calc(var(--d,0)*80ms); }
+@keyframes fadeUp{ from{ opacity:0; transform:translateY(16px);} to{ opacity:1; transform:none;} }
+@media(prefers-reduced-motion:reduce){ .reveal,.floaty,.greenlight .dot,.cd-colon{ animation:none; } }
+</style>
+</head>
+<body>
+
+<!-- ───────────────────────── header ───────────────────────── -->
+<header class="header">
+  <div class="header-in">
+    <a class="brand" href="#top">
+      <span class="mark">
+        <svg class="c1" width="20" height="20" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#0098DB" stroke-width="2.4"/></svg>
+        <svg class="c2" width="20" height="20" viewBox="0 0 24 24"><path d="M12 3.5 L21 20 L3 20 Z" fill="none" stroke="#175E54" stroke-width="2.4" stroke-linejoin="round"/></svg>
+        <svg class="c3" width="18" height="18" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5" fill="none" stroke="#8C1515" stroke-width="2.4"/></svg>
+      </span>
+      <span>
+        <span class="brand-name">Squid Games</span>
+        <span class="brand-sub">@ Stanford</span>
+      </span>
+    </a>
+
+    <nav class="nav">
+      <a href="#next" data-spy="next" class="active">Next Game</a>
+      <a href="#people" data-spy="people">People</a>
+      <a href="#highlights" data-spy="highlights">Highlights</a>
+      <a href="#schedule" data-spy="schedule">Schedule</a>
+    </nav>
+
+    <div class="header-right">
+      <span class="streak-chip"><span>🔥</span><span class="n">3-week streak</span></span>
+      <span class="av" style="width:36px;height:36px;background:var(--poppy)">YJ</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="top">
+  <div class="grid">
+
+    <!-- ═══════════ MAIN COLUMN ═══════════ -->
+    <div class="col">
+
+      <!-- HERO -->
+      <section class="card hero reveal" id="next" style="--d:0">
+        <!-- arcade crown -->
+        <svg class="arcade" viewBox="0 0 540 30" preserveAspectRatio="none" aria-hidden="true">
+          <path fill="none" stroke="currentColor" stroke-width="2"
+            d="M6,26 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0 a18,18 0 0 1 36,0"/>
+        </svg>
+
+        <div class="hero-deco t1 floaty"><svg width="150" height="150" viewBox="0 0 24 24"><path d="M12 3.5 L21 20 L3 20 Z" fill="none" stroke="#175E54" stroke-width="2.4" stroke-linejoin="round"/></svg></div>
+        <div class="hero-deco t2 floaty" style="animation-delay:-4s"><svg width="92" height="92" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="#0098DB" stroke-width="2.4"/></svg></div>
+
+        <div class="hero-pad">
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+            <span class="greenlight"><span class="dot"></span><span class="t">Green Light · RSVP Open</span></span>
+            <span class="mono" style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--stone-2)">Game Night #14</span>
+          </div>
+
+          <h1>This Thursday,<br>we <em>run</em> again.</h1>
+          <p class="lead"><b>5 people</b> you met last week are coming back. We kick off at golden hour — a few rounds in, you're old friends.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-row">
+            <div>
+              <div class="cd-label">Kickoff in</div>
+              <div class="countdown" id="countdown">
+                <div class="cd-unit"><div class="cd-num" data-u="d">06</div><div class="cd-cap">Days</div></div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit"><div class="cd-num" data-u="h">06</div><div class="cd-cap">Hrs</div></div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit"><div class="cd-num" data-u="m">44</div><div class="cd-cap">Min</div></div>
+                <span class="cd-colon">:</span>
+                <div class="cd-unit"><div class="cd-num" data-u="s">00</div><div class="cd-cap">Sec</div></div>
+              </div>
+            </div>
+            <div class="when">
+              <div><span>📅</span><b>Thu · Jul 2 · 6:30 PM</b></div>
+              <div class="muted"><span>📍</span><span>Wilbur Field, Stanford</span></div>
+              <div class="muted"><span>🌇</span><span>Starts at sunset</span></div>
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="chip" style="background:rgba(23,94,84,.12);color:var(--palo)"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 4 L20 19 L4 19 Z" fill="none" stroke="#175E54" stroke-width="2.6" stroke-linejoin="round"/></svg>Red Light, Green Light</span>
+            <span class="chip" style="background:rgba(140,21,21,.10);color:var(--cardinal)"><svg width="13" height="13" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5" fill="none" stroke="#8C1515" stroke-width="2.6"/></svg>Capture the Flag</span>
+            <span class="chip" style="background:rgba(0,152,219,.12);color:#0a6f9e"><svg width="13" height="13" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#0098DB" stroke-width="2.6"/></svg>Freeze Tag</span>
+            <span class="chip" style="background:rgba(233,131,0,.14);color:#9a5500"><svg width="13" height="13" viewBox="0 0 24 24"><path d="M12 4 L20 19 L4 19 Z" fill="none" stroke="#E98300" stroke-width="2.6" stroke-linejoin="round"/></svg>Cops &amp; Robbers</span>
+          </div>
+        </div>
+
+        <div class="hero-foot">
+          <div class="stack">
+            <div class="av-row">
+              <span class="av" style="width:34px;height:34px;background:#E98300">YJ</span>
+              <span class="av" style="width:34px;height:34px;background:#175E54">MP</span>
+              <span class="av" style="width:34px;height:34px;background:#0098DB">DC</span>
+              <span class="av" style="width:34px;height:34px;background:#B3995D">SR</span>
+              <span class="av" style="width:34px;height:34px;background:#8C1515">JL</span>
+              <span class="av" style="width:34px;height:34px;background:#651C32">PN</span>
+            </div>
+            <div class="going">
+              <span class="n"><b class="mono">23</b> going</span>
+              <small>incl. 5 friends from last week</small>
+            </div>
+          </div>
+          <div class="cta">
+            <button class="btn btn-primary">Count me in · RSVP <span>→</span></button>
+            <button class="btn btn-ghost">Invite a friend</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PEOPLE YOU MET -->
+      <section class="reveal" id="people" style="--d:1">
+        <div class="sec-head">
+          <div>
+            <div class="kicker">Keep the connection</div>
+            <h2 class="sec-title">People you met last time</h2>
+            <p class="sec-sub">You've already run together. Say hi this week and it sticks.</p>
+          </div>
+        </div>
+        <div class="scroller">
+          <div class="person">
+            <div class="top"><span class="av" style="width:44px;height:44px;background:#E98300">MP</span><span class="ago">1 wk ago</span></div>
+            <div class="nm">Mina Park</div><div class="note">Same team in Freeze Tag</div>
+            <button class="act" style="background:rgba(233,131,0,.14);color:#9a5500">Say hi</button>
+          </div>
+          <div class="person">
+            <div class="top"><span class="av" style="width:44px;height:44px;background:#0098DB">DC</span><span class="ago">1 wk ago</span></div>
+            <div class="nm">Daniel Cho</div><div class="note">Your Cops &amp; Robbers rival</div>
+            <button class="act" style="background:rgba(0,152,219,.14);color:#0a6f9e">Same team?</button>
+          </div>
+          <div class="person">
+            <div class="top"><span class="av" style="width:44px;height:44px;background:#B3995D">SR</span><span class="ago">2 wks ago</span></div>
+            <div class="nm">Sofia Reyes</div><div class="note">Capture the Flag MVP</div>
+            <button class="act" style="background:rgba(179,153,93,.18);color:#7a6428">Say hi</button>
+          </div>
+          <div class="person">
+            <div class="top"><span class="av" style="width:44px;height:44px;background:#175E54">JL</span><span class="ago">1 wk ago</span></div>
+            <div class="nm">Jay Lim</div><div class="note">Last one standing — Red Light</div>
+            <button class="act" style="background:rgba(23,94,84,.14);color:var(--palo)">Team up</button>
+          </div>
+          <div class="person">
+            <div class="top"><span class="av" style="width:44px;height:44px;background:#8C1515">PN</span><span class="ago">1 wk ago</span></div>
+            <div class="nm">Priya N.</div><div class="note">First-timer last week</div>
+            <button class="act" style="background:rgba(140,21,21,.10);color:var(--cardinal)">Welcome them</button>
+          </div>
+          <a class="person-add" href="#"><span><span class="plus">＋</span><br>Browse all<br>members</span></a>
+        </div>
+      </section>
+
+      <!-- HIGHLIGHTS -->
+      <section class="reveal" id="highlights" style="--d:2">
+        <div class="sec-head">
+          <div>
+            <div class="kicker">Last game night</div>
+            <h2 class="sec-title">Highlights from the field</h2>
+            <p class="sec-sub">Missed it? Make the next one yourself.</p>
+          </div>
+          <a class="sec-link" href="#">See full album →</a>
+        </div>
+        <div class="hl-grid">
+          <article class="hl big">
+            <div class="hl-media" style="background:linear-gradient(135deg,#1f8f78,#0f5246 78%)">
+              <div class="grain"></div>
+              <div class="hl-sticker"><svg width="32" height="32" viewBox="0 0 24 24"><path d="M12 4 L20 19 L4 19 Z" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2.4" stroke-linejoin="round"/></svg></div>
+              <div class="hl-react"><span>😵 41</span><span>🔥 28</span><span>👏 17</span></div>
+            </div>
+            <div class="hl-body">
+              <div class="hl-meta">Game Night #13 · Wilbur Field</div>
+              <div class="hl-title">12 people froze at once in the final round</div>
+              <div class="hl-who">🏷️ Jay · Mina · +9 more</div>
+            </div>
+          </article>
+          <article class="hl">
+            <div class="hl-media" style="background:linear-gradient(135deg,#c1474d,#8C1515 78%)">
+              <div class="grain"></div>
+              <div class="hl-sticker"><svg width="30" height="30" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2.4"/></svg></div>
+              <div class="hl-react"><span>🏴 33</span><span>😂 22</span></div>
+            </div>
+            <div class="hl-body">
+              <div class="hl-meta">Capture the Flag · Final</div>
+              <div class="hl-title">Sofia stole 3 flags and ran — legend</div>
+              <div class="hl-who">🏷️ Sofia · Daniel</div>
+            </div>
+          </article>
+          <article class="hl">
+            <div class="hl-media" style="background:linear-gradient(135deg,#37a7dd,#0a6f9e 78%)">
+              <div class="grain"></div>
+              <div class="hl-sticker"><svg width="30" height="30" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="2.4"/></svg></div>
+              <div class="hl-react"><span>🌇 56</span><span>❤️ 39</span></div>
+            </div>
+            <div class="hl-body">
+              <div class="hl-meta">Right before sundown</div>
+              <div class="hl-title">Whole crew at sunset — all 23 survived</div>
+              <div class="hl-who">🏷️ Everyone</div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- NEWCOMER -->
+      <section class="newcomer reveal" style="--d:3">
+        <div class="arch-deco"><svg width="160" height="160" viewBox="0 0 100 100"><path d="M10,95 V45 a40,40 0 0 1 80,0 V95" fill="none" stroke="#fff" stroke-width="3"/></svg></div>
+        <div>
+          <div class="kicker">First time?</div>
+          <h3>New here? You don't need to know the rules.</h3>
+          <p>We always open with <b>Red Light, Green Light</b> — a Korean schoolyard classic. Five minutes and you'll know everyone's name.</p>
+        </div>
+        <button class="btn">Read the newcomer guide</button>
+      </section>
+    </div>
+
+    <!-- ═══════════ RIGHT RAIL ═══════════ -->
+    <aside class="rail reveal" style="--d:1">
+
+      <!-- YOU / streak -->
+      <div class="rcard" id="you">
+        <div class="you-top">
+          <div class="you-id">
+            <span class="av" style="width:40px;height:40px;background:#E98300">YJ</span>
+            <span><span class="nm">Yujin · You</span><br><small>Spring '26 · 7 sessions</small></span>
+          </div>
+          <span style="font-size:22px">🔥</span>
+        </div>
+        <div class="streak-box">
+          <div class="big"><b>3</b><span>weeks in a row</span></div>
+          <div class="weeks">
+            <span class="week on">✓</span><span class="week on">✓</span><span class="week on">✓</span>
+            <span class="week off">4</span><span class="week off">5</span>
+          </div>
+          <p class="streak-note">2 more and you earn the <b>'Tagged In'</b> badge 🏅</p>
+        </div>
+      </div>
+
+      <!-- TEAM STANDINGS -->
+      <div class="rcard">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span class="rtitle">Team standings</span>
+          <span class="mono" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--stone-2)">Spring '26</span>
+        </div>
+        <div style="margin-top:14px">
+          <div class="team">
+            <div class="row"><span class="l"><span class="rank">1</span><svg width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#0098DB" stroke-width="2.4"/></svg><span class="nm">Team Circle</span></span><span class="pts" style="color:#0a6f9e">340</span></div>
+            <div class="bar"><i style="width:100%;background:#0098DB"></i></div>
+          </div>
+          <div class="team">
+            <div class="row"><span class="l"><span class="rank">2</span><svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 4 L20 19 L4 19 Z" fill="none" stroke="#175E54" stroke-width="2.4" stroke-linejoin="round"/></svg><span class="nm">Team Triangle</span></span><span class="pts" style="color:var(--palo)">315</span></div>
+            <div class="bar"><i style="width:92.6%;background:#175E54"></i></div>
+          </div>
+          <div class="team">
+            <div class="row"><span class="l"><span class="rank">3</span><svg width="14" height="14" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5" fill="none" stroke="#8C1515" stroke-width="2.4"/></svg><span class="nm">Team Square</span></span><span class="pts" style="color:var(--cardinal)">298</span></div>
+            <div class="bar"><i style="width:87.6%;background:#8C1515"></i></div>
+          </div>
+        </div>
+        <p class="rnote">Teams reshuffle weekly — you'll always be on a team with someone new.</p>
+      </div>
+
+      <!-- UPCOMING -->
+      <div class="rcard" id="schedule">
+        <span class="rtitle">Upcoming game nights</span>
+        <div style="margin-top:8px">
+          <div class="event">
+            <div class="date" style="background:rgba(140,21,21,.10)"><span class="m" style="color:var(--cardinal)">JUL</span><span class="d" style="color:var(--cardinal)">2</span></div>
+            <div class="info"><div class="t"><span class="nm">Game Night #14</span><span class="tag hot">This week</span></div><small>6:30 PM · Wilbur Field</small></div>
+          </div>
+          <div class="event">
+            <div class="date" style="background:rgba(46,45,41,.05)"><span class="m" style="color:var(--stone-2)">JUL</span><span class="d">11</span></div>
+            <div class="info"><div class="t"><span class="nm">Alumni vs Current · CTF</span><span class="tag soft">Special</span></div><small>3:00 PM · The Oval</small></div>
+          </div>
+          <div class="event">
+            <div class="date" style="background:rgba(46,45,41,.05)"><span class="m" style="color:var(--stone-2)">JUL</span><span class="d">16</span></div>
+            <div class="info"><div class="t"><span class="nm">Game Night #15 · Freeze Tag</span></div><small>6:30 PM · Wilbur Field</small></div>
+          </div>
+        </div>
+        <button class="btn btn-ghost cal-btn">Add all to calendar</button>
+      </div>
+
+      <p class="rail-foot">○ △ □ &nbsp;·&nbsp; SQUID GAMES @ STANFORD<br>Everyone's it. Everyone's a friend.</p>
+    </aside>
+
+  </div>
+</main>
+
+<!-- ───────────────────────── bottom tab (mobile) ───────────────────────── -->
+<nav class="tabbar">
+  <div class="tabbar-in">
+    <a class="tab active" href="#top" data-spy="top"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v9.5h13V10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Home</span></a>
+    <a class="tab" href="#next" data-spy="next"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></g></svg><span>Games</span></a>
+    <a class="tab" href="#people" data-spy="people"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 3-4.5 5.5-4.5S14 16 14.5 19M15.5 6a3 3 0 0 1 0 5M16.5 14.6c2 .5 3.6 2 4 4.4"/></g></svg><span>People</span></a>
+    <a class="tab" href="#highlights" data-spy="highlights"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="9.5" r="1.6"/><path d="M4 17l4.5-4.5 4 3.5 3-2.5L20.5 17"/></g></svg><span>Album</span></a>
+    <a class="tab" href="#you" data-spy="you"><svg viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 19.5c.8-3.5 3.6-5.5 7-5.5s6.2 2 7 5.5"/></g></svg><span>You</span></a>
+  </div>
+</nav>
+
+<script>
+/* ── live countdown (vanilla, no deps) ── */
+(function(){
+  var target = new Date(2026, 6, 2, 18, 30, 0); // Jul 2 2026, 6:30 PM local
+  var el = { d:document.querySelector('[data-u=d]'), h:document.querySelector('[data-u=h]'),
+             m:document.querySelector('[data-u=m]'), s:document.querySelector('[data-u=s]') };
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    var t = Math.max(0, target - new Date()), s = Math.floor(t/1000);
+    el.d.textContent = pad(Math.floor(s/86400));
+    el.h.textContent = pad(Math.floor((s%86400)/3600));
+    el.m.textContent = pad(Math.floor((s%3600)/60));
+    el.s.textContent = pad(s%60);
+  }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* ── scroll-spy: highlight nav + tab for the section in view ── */
+(function(){
+  if(!('IntersectionObserver' in window)) return;
+  var ids = ['next','people','highlights','schedule','you','top'];
+  var links = document.querySelectorAll('[data-spy]');
+  function setActive(id){
+    links.forEach(function(a){
+      var on = a.getAttribute('data-spy') === id || (a.getAttribute('data-spy')==='top' && id==='next');
+      a.classList.toggle('active', on);
+    });
+  }
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) setActive(e.target.id); });
+  }, { rootMargin:'-45% 0px -50% 0px', threshold:0 });
+  ids.forEach(function(id){ var el=document.getElementById(id); if(el) obs.observe(el); });
+})();
+</script>
+</body>
+</html>
